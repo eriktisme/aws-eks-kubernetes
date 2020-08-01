@@ -1,0 +1,40 @@
+repositories:
+  - name: stable
+    url: https://kubernetes-charts.storage.googleapis.com
+
+helmDefaults:
+  tillerless: true
+  verify: false
+  wait: true
+  timeout: 600
+  force: true
+  createNamespace: true
+
+releases:
+  - name: metrics-server
+    chart: stable/metrics-server
+    namespace: kube-system
+    version: 2.11.1
+    values:
+      - "./helm-charts/metrics-server/values.yaml"
+  - name: cluster-autoscaler
+    chart: stable/cluster-autoscaler
+    namespace: kube-system
+    version: 7.3.4
+    values:
+      - "./helm-charts/cluster-autoscaler/values.yaml"
+  - name: prometheus-operator
+    chart: stable/prometheus-operator
+    namespace: monitoring
+    version: 9.3.0
+    values:
+      - "helm-charts/prometheus/values.yaml"
+    set:
+      - name: grafana.adminPassword
+        value: {{ requiredEnv "GRAFANA_PASSWORD" }}
+  - name: nginx-ingress
+    chart: stable/nginx-ingress
+    version: 1.41.2
+    namespace: kube-system
+    values:
+      - "helm-charts/nginx-ingress/values.yaml"

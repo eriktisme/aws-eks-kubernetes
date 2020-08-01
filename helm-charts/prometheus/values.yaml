@@ -25,7 +25,6 @@ promotheus:
               storage: 10Gi
 
 grafana:
-  adminPassword: secret
   ingress:
     enabled: true
     annotations:
