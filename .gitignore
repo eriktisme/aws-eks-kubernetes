@@ -44,3 +44,5 @@ override.tf.json
 *_override.tf.json
 
 kubeconfig*
+.env
+.env.backup
