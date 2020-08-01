@@ -1,4 +1,3 @@
-# aws-eks-kubermetes
 # EKS - AWS
 
 Operate EKS Kubernetes at Production scale with Terraform, Helm, Ingress, Prometheus, Grafana and Helmfile
