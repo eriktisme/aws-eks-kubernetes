@@ -14,6 +14,9 @@ cloudProvider: aws
 rbac:
   create: true
 
-podAnnotations: {
-#  cluster-autoscaler.kubernetes.io/safe-to-evict: false
-}
+serviceMonitor:
+  enabled: true
+  interval: 10s
+  namespace: monitoring
+  selector:
+    release: prometheus-operator
