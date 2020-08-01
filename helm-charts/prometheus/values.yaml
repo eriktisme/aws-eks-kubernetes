@@ -1,0 +1,61 @@
+coreDns:
+  enabled: true
+
+kubeDns:
+  enabled: false
+
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+promotheus:
+  promotheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+grafana:
+  adminPassword: secret
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "false"
+    hosts:
+      - grafana.scaling.cloud
+    persistence:
+      enabled: true
+      accessModes: ["ReadWriteOnce"]
+      size: 10Gi
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+    dashboards:
+      default:
+        prometheus-stats:
+          gnetId: 2
+          revision: 2
+          datasource: Prometheus
+        cluster-autoscaler:
+          gnetId: 3831
+          revision: 1
+          datasource: Prometheus
