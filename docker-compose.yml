@@ -18,7 +18,6 @@ services:
       - aws-creds:/root/.aws:ro
     entrypoint: kubectl
     environment:
-      KUBECONFIG: /code/kubeconfig_awesome
       EKS_AWS_PROFILE: default
     ports:
      - 8090:8090
@@ -35,25 +34,23 @@ services:
     image: abdennour/helm:3.1.2-aws1.18.31-kubectlv1.17.4
     working_dir: /code
     volumes:
-    - .:/code
-    - helm-config:/root/.config/helm
-    - helm-cache:/root/.cache/helm
-    - aws-creds:/root/.aws:ro
+      - .:/code
+      - helm-config:/root/.config/helm
+      - helm-cache:/root/.cache/helm
+      - aws-creds:/root/.aws:ro
     env_file:
       - .env
-    environment:
-      KUBECONFIG: /code/kubeconfig_awesome
 
   helmfile:
     image: abdennour/helmfile:v0.125.0-aws-1.18.105
     working_dir: /code
     volumes:
-    - .:/code
-    - helm-config:/root/.config/helm
-    - helm-cache:/root/.cache/helm
-    - aws-creds:/root/.aws:ro
-    environment:
-      KUBECONFIG: /code/kubeconfig_awesome
+      - .:/code
+      - helm-config:/root/.config/helm
+      - helm-cache:/root/.cache/helm
+      - aws-creds:/root/.aws:ro
+    env_file:
+      - .env
 
 volumes:
   aws-creds:

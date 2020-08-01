@@ -10,19 +10,18 @@ helmDefaults:
   force: true
   createNamespace: true
 
+environments:
+  default:
+  staging:
+
 releases:
+  {{ if eq .Environment.Name "default" }}
   - name: metrics-server
     chart: stable/metrics-server
     namespace: kube-system
     version: 2.11.1
     values:
       - "./helm-charts/metrics-server/values.yaml"
-  - name: cluster-autoscaler
-    chart: stable/cluster-autoscaler
-    namespace: kube-system
-    version: 7.3.4
-    values:
-      - "./helm-charts/cluster-autoscaler/values.yaml"
   - name: prometheus-operator
     chart: stable/prometheus-operator
     namespace: monitoring
@@ -32,9 +31,17 @@ releases:
     set:
       - name: grafana.adminPassword
         value: {{ requiredEnv "GRAFANA_PASSWORD" }}
+  - name: cluster-autoscaler
+    chart: stable/cluster-autoscaler
+    namespace: kube-system
+    version: 7.3.4
+    values:
+      - "./helm-charts/cluster-autoscaler/values.yaml"
+  {{ end }}
   - name: nginx-ingress
     chart: stable/nginx-ingress
     version: 1.41.2
     namespace: kube-system
     values:
       - "helm-charts/nginx-ingress/values.yaml"
+      - "helm-charts/nginx-ingress/values.{{ .Environment.Name }}.yaml"

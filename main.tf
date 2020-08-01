@@ -3,12 +3,33 @@ provider "aws" {
 }
 
 locals {
-  prefix = "${var.prefix}-${terraform.workspace}"
+  environment = terraform.workspace
+
+  cluster_name_map = {
+    default = "awesome"
+    staging = "staging-awesome"
+  }
+
+  cluster_name = lookup(local.cluster_name_map, local.environment)
+
+  vpc_cidr_map = {
+    default = "10.0.0.0/16"
+    staging = "172.16.0.0/16"
+  }
+
+  vpc_cidr = lookup(local.vpc_cidr_map, local.environment)
+
+  vpc_subnets_map = {
+    default = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+    staging = cidrsubnets(local.vpc_cidr, 4, 4, 4)
+  }
+
+  vpc_subnets = lookup(local.vpc_subnets_map, local.environment)
 
   common_tags = {
     Environment = terraform.workspace
-    Project     = var.project
-    Owner       = var.contact
+    Project     = "awesome"
+    Owner       = "erik@erikvandam.dev"
     ManagedBy   = "Terraform"
   }
 }
@@ -21,16 +42,16 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "2.44.0"
 
-  name           = "vpc-awesome"
-  cidr           = "10.0.0.0/16"
+  name           = "vpc-${local.cluster_name}"
+  cidr           = local.vpc_cidr
   azs            = data.aws_availability_zones.available.names
-  public_subnets = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  public_subnets = local.vpc_subnets
 
   enable_dns_support   = true
   enable_dns_hostnames = true
 
   tags = {
-    "kubernetes.io/cluster/awesome" = "shared"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
 }
 
@@ -56,7 +77,8 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "12.2.0"
 
-  cluster_name = "awesome"
+  cluster_version = "1.16"
+  cluster_name = local.cluster_name
 
   subnets = module.vpc.public_subnets
   vpc_id  = module.vpc.vpc_id

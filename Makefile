@@ -29,11 +29,11 @@ tf-destroy:
 
 .PHONY: tf-workspace-staging
 tf-workspace-staging:
-	docker-compose run --rm terraform workspace select staging
+	docker-compose run --rm terraform workspace select staging || docker-compose run --rm terraform workspace new staging
 
-.PHONY: tf-workspace-production
-tf-workspace-production:
-	docker-compose run --rm terraform workspace select production
+.PHONY: tf-workspace-default
+tf-workspace-default:
+	docker-compose run --rm terraform workspace select default
 
 .PHONY: kubectl-get--namespaces
 kubectl-get-namespaces:
