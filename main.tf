@@ -1,30 +1,24 @@
 provider "aws" {
-  region  = "eu-west-1"
+  region = "eu-west-1"
 }
 
 locals {
   environment = terraform.workspace
 
-  cluster_name_map = {
+  cluster_name = lookup({
     default = "awesome"
     staging = "staging-awesome"
-  }
+  }, local.environment)
 
-  cluster_name = lookup(local.cluster_name_map, local.environment)
-
-  vpc_cidr_map = {
+  vpc_cidr = lookup({
     default = "10.0.0.0/16"
     staging = "172.16.0.0/16"
-  }
+  }, local.environment)
 
-  vpc_cidr = lookup(local.vpc_cidr_map, local.environment)
-
-  vpc_subnets_map = {
+  vpc_subnets = lookup({
     default = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
     staging = cidrsubnets(local.vpc_cidr, 4, 4, 4)
-  }
-
-  vpc_subnets = lookup(local.vpc_subnets_map, local.environment)
+  }, local.environment)
 
   common_tags = {
     Environment = terraform.workspace
@@ -60,9 +54,9 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 provider "kubernetes" {
-  host = module.eks.cluster_endpoint
+  host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-  token = data.aws_eks_cluster_auth.cluster.token
+  token                  = data.aws_eks_cluster_auth.cluster.token
   load_config_file       = false
 }
 
@@ -78,7 +72,7 @@ module "eks" {
   version = "12.2.0"
 
   cluster_version = "1.16"
-  cluster_name = local.cluster_name
+  cluster_name    = local.cluster_name
 
   subnets = module.vpc.public_subnets
   vpc_id  = module.vpc.vpc_id
