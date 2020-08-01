@@ -1,0 +1,19 @@
+autoDiscovery:
+  clusterName: awesome
+  enabled: true
+
+extraArgs:
+  v: 4
+  stderrthreshold: info
+  logtostderr: true
+  balance-similar-node-groups: true
+  skip-nodes-with-system-pods: false
+
+awsRegion: eu-west-1
+cloudProvider: aws
+rbac:
+  create: true
+
+podAnnotations: {
+#  cluster-autoscaler.kubernetes.io/safe-to-evict: false
+}

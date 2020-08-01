@@ -1,0 +1,23 @@
+rbac:
+  create: true
+
+controller:
+   service:
+     targetPorts:
+       http: http
+       https: http
+     annotations:
+       service:
+         beta:
+           kubernetes:
+             io/aws-load-balancer-connection-idle-timeout: "3600"
+             io/aws-load-balancer-ssl-ports: "https"
+             io/aws-load-balancer-backend-protocol: "http"
+             io/aws-load-balancer-ssl-cert: "arn:aws:acm:eu-west-1:096007086684:certificate/e5dd2385-f6be-492e-97a7-bd397f6ac235"
+       nginx:
+         ingress:
+           kubernetes:
+             io/configuration-snippet: |
+               if ($http_x_forwarded_proto = 'http') {
+                return 301 https://$host$request_uri;
+               }
