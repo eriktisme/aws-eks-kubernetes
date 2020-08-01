@@ -37,29 +37,29 @@ grafana:
       enabled: true
       accessModes: ["ReadWriteOnce"]
       size: 10Gi
-    dashboardProviders:
-      dashboardproviders.yaml:
-        apiVersion: 1
-        providers:
-          - name: 'default'
-            orgId: 1
-            folder: ''
-            type: file
-            disableDeletion: false
-            editable: true
-            options:
-              path: /var/lib/grafana/dashboards/default
-    dashboards:
-      default:
-        prometheus-stats:
-          gnetId: 2
-          revision: 2
-          datasource: Prometheus
-        nginx-ingress:
-          gnetId: 9614
-          revision: 1
-          datasource: Prometheus
-        cluster-autoscaler:
-          gnetId: 3831
-          revision: 1
-          datasource: Prometheus
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboards:
+    default:
+      prometheus-stats:
+        gnetId: 2
+        revision: 2
+        datasource: Prometheus
+      nginx-ingress:
+        gnetId: 9614
+        revision: 1
+        datasource: Prometheus
+      cluster-autoscaler:
+        gnetId: 3831
+        revision: 1
+        datasource: Prometheus
