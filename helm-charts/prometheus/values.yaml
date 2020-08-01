@@ -55,6 +55,10 @@ grafana:
           gnetId: 2
           revision: 2
           datasource: Prometheus
+        nginx-ingress:
+          gnetId: 9614
+          revision: 1
+          datasource: Prometheus
         cluster-autoscaler:
           gnetId: 3831
           revision: 1
